@@ -9,6 +9,7 @@ import io
 
 from gemini_service import GeminiService, get_api_key
 from prompts import DEFAULT_IMAGE_PROMPT
+from telegram_service import is_telegram_configured, send_telegram_message
 
 # 1. Page Configuration
 st.set_page_config(
@@ -104,6 +105,36 @@ with st.sidebar:
         """,
         unsafe_allow_html=True
     )
+
+    st.markdown("---")
+    st.markdown("#### 📱 Telegram Delivery")
+    
+    telegram_ready = is_telegram_configured()
+    if telegram_ready:
+        st.caption("✅ Telegram connected")
+    else:
+        st.caption("ℹ️ Telegram not configured in secrets.toml")
+
+    if st.button(
+        "📨 Send Study Summary to Telegram",
+        use_container_width=True,
+        help="Generate and deliver a structured summary of this study session to your Telegram chat."
+    ):
+        if not st.session_state.messages:
+            st.warning("⚠️ No study session to summarize yet! Ask a question or upload study notes first.")
+        elif not telegram_ready:
+            st.error("⚠️ Telegram is not configured! Please add `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` to `.streamlit/secrets.toml`.")
+        else:
+            with st.spinner("Generating summary and sending to Telegram..."):
+                try:
+                    summary_text = st.session_state.chat_session.generate_study_summary()
+                    success, result_msg = send_telegram_message(summary_text)
+                    if success:
+                        st.success(f"✅ {result_msg}")
+                    else:
+                        st.error(f"❌ {result_msg}")
+                except Exception as ex:
+                    st.error(f"❌ Error generating summary: {ex}")
 
     st.markdown("---")
     if st.button("🗑️ Start New Session", use_container_width=True, help="Clear history and start fresh"):

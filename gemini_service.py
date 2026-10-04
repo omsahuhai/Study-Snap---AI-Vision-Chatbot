@@ -19,7 +19,7 @@ from prompts import STUDYSNAP_SYSTEM_INSTRUCTION, DEFAULT_IMAGE_PROMPT
 
 # Default reliable multimodal model for conversational study assistance on Google GenAI Interactions API.
 # (Can be overridden via GEMINI_MODEL env var, e.g. 'gemini-3.8-flash' when quota is available).
-DEFAULT_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash")
+DEFAULT_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
 
 
 def get_api_key(explicit_key: Optional[str] = None) -> Optional[str]:
@@ -157,6 +157,15 @@ class StudySnapChatSession:
     def get_history(self) -> List[Dict[str, Any]]:
         """Returns the conversation history list."""
         return list(self.history)
+
+    def generate_study_summary(self) -> str:
+        """
+        Generates a concise study summary using the existing multi-turn conversation context.
+        """
+        from prompts import STUDY_SUMMARY_PROMPT
+        if not self.history:
+            return "No study session history available yet. Ask a question or upload study notes first!"
+        return self.send_message(text=STUDY_SUMMARY_PROMPT)
 
 
 class GeminiService:

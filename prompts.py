@@ -15,3 +15,17 @@ Guidelines for your responses:
 """
 
 DEFAULT_IMAGE_PROMPT = "Please analyze this study material, solve any questions shown, or explain the key concepts and diagrams step by step in simple language."
+
+STUDY_SUMMARY_PROMPT = """Based on our study session conversation, create a clean, structured study summary suitable for Telegram.
+
+Please include:
+🎓 StudySnap Session Summary: [Brief topic title]
+📌 Main Questions/Topics Discussed:
+- Bullet points of what was asked and explored
+💡 Important Concepts & Formulas:
+- Key rules, formulas, or core definitions identified
+📝 What to Revise:
+- 1-3 practical points the student should review to master this material
+
+Keep the summary clear, encouraging, and concise enough to read quickly on mobile.
+"""
